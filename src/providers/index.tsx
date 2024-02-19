@@ -1,4 +1,4 @@
-import { ClerkProvider } from '@clerk/nextjs';
+import { Toaster } from 'react-hot-toast';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -6,5 +6,10 @@ interface ProvidersProps {
 
 export default function Providers(props: ProvidersProps) {
   const { children } = props;
-  return <ClerkProvider>{children}</ClerkProvider>;
+  return (
+    <>
+      <Toaster position='top-center' />
+      {children}
+    </>
+  );
 }
