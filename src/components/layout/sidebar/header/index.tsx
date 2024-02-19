@@ -6,7 +6,9 @@ export default function SidebarHeader() {
   return (
     <div className='flex items-center gap-4 mb-4 px-4'>
       <SiOpenaigym className='w-10 h-10 text-primary' />
-      <div className='text-xl font-extrabold text-primary'>GPT Travels</div>
+      <div className='text-xl font-extrabold text-primary mr-auto'>
+        GPT Travels
+      </div>
       <ThemeToggle />
     </div>
   );
