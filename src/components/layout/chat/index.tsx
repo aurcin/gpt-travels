@@ -1,14 +1,53 @@
 'use client';
 
+import { generateChatResponse } from '@/actions/chat';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
+
+import { Message } from '@/types/chat';
 
 export default function Chat() {
   const [text, setText] = useState<string>('');
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [conversationId, setConversationId] = useState(
+    Math.random()
+      .toString(36)
+      .replace(/[^a-z]+/g, '')
+      .substr(2, 10)
+  );
+
+  const { mutate } = useMutation({
+    mutationFn: (message: string) =>
+      generateChatResponse(message, conversationId),
+    onSuccess: data => {
+      if (!data) {
+        toast.error('Something went wrong');
+        return;
+      }
+
+      const query: Message = {
+        role: 'CHATBOT',
+        message: data,
+      };
+      setMessages(prev => {
+        return [...prev, query];
+      });
+    },
+  });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log(text);
+    const query: Message = {
+      role: 'USER',
+      message: text,
+    };
+
+    mutate(text);
+    setMessages(prev => {
+      return [...prev, query];
+    });
+    setText('');
   }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
