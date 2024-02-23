@@ -7,6 +7,11 @@ import toast from 'react-hot-toast';
 
 import { Message } from '@/types/chat';
 
+const avatars = {
+  human: '🤵',
+  robot: '🤖',
+};
+
 export default function Chat() {
   const [text, setText] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -17,7 +22,7 @@ export default function Chat() {
       .substr(2, 10)
   );
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (message: string) =>
       generateChatResponse(message, conversationId),
     onSuccess: data => {
@@ -55,10 +60,25 @@ export default function Chat() {
     setText(e.target.value);
   }
 
+  const renderMessages = messages.map((item, index) => {
+    const { role, message } = item;
+    const avatar = role === 'USER' ? avatars.human : avatars.robot;
+    const backgroundClass = role === 'USER' ? 'bg-base-200' : 'bg-base-100';
+    return (
+      <div
+        key={index}
+        className={`${backgroundClass} flex py-6 -mx-8 px-8 text-xl leading-loose border-b border-base-300`}>
+        <span className='mr-4'>{avatar}</span>
+        <p className='max-w-3xl'>{message}</p>
+      </div>
+    );
+  });
+
   return (
     <div className='min-h-[calc(100vh-6rem)] grid grid-rows-[1fr,auto]'>
       <div>
-        <h2 className='text-5xl'>messages</h2>
+        {renderMessages}
+        {isPending && <span className='loading'></span>}
       </div>
       <form onSubmit={handleSubmit} className='max-w-4xl pt-12'>
         <div className='join w-full'>
@@ -70,8 +90,11 @@ export default function Chat() {
             required
             onChange={handleInputChange}
           />
-          <button className='btn btn-primary join-item' type='submit'>
-            Ask a question
+          <button
+            className='btn btn-primary join-item'
+            type='submit'
+            disabled={isPending}>
+            {isPending ? 'Sending data...' : 'Ask a question'}
           </button>
         </div>
       </form>
