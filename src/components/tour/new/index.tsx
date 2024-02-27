@@ -11,10 +11,19 @@ import {
 import { TourDestination } from '@/types/tour';
 
 export default function NewTour() {
+  const queryClient = useQueryClient();
   const { mutate, isPending, data } = useMutation({
     mutationFn: async (destination: TourDestination) => {
+      const existingTour = await getExistingTour(destination);
+      if (existingTour) {
+        return existingTour;
+      }
+
       const newTour = await generateTourData(destination);
+
       if (newTour) {
+        await createNewTour(newTour);
+        queryClient.invalidateQueries({ queryKey: ['tours'] });
         return newTour;
       }
 
@@ -33,7 +42,7 @@ export default function NewTour() {
   }
 
   if (isPending) {
-    return <span className='loading, loading-lg'></span>;
+    return <span className='loading loading-lg'></span>;
   }
 
   return (

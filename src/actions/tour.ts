@@ -1,12 +1,28 @@
 'use server';
 
 import { cohere } from '@/utils/ai-client';
-
-import { TourDestination } from '@/types/tour';
+import db from '@/db';
+import { TourAI, TourDB, TourDestination } from '@/types/tour';
 import { tourQuery } from '@/utils/ai-client/question';
 
 export async function getExistingTour(destination: TourDestination) {
-  return null;
+  const { city, country } = destination;
+
+  const tour = await db.tour.findUnique({
+    where: {
+      city_country: {
+        city,
+        country,
+      },
+    },
+  });
+  if (!tour) {
+    return null;
+  }
+
+  const stops = tour.stops.split('-|-');
+
+  return { ...tour, stops };
 }
 
 export async function generateTourData(destination: TourDestination) {
@@ -30,6 +46,10 @@ export async function generateTourData(destination: TourDestination) {
   }
 }
 
-export async function createNewTour(tour: any) {
-  return null;
+export async function createNewTour(tour: TourAI) {
+  const newTour: TourDB = { ...tour, stops: tour.stops.join('-|-') };
+
+  return db.tour.create({
+    data: newTour,
+  });
 }

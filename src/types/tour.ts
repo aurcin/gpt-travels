@@ -3,10 +3,28 @@ export interface TourDestination {
   country: string;
 }
 
-export interface Tour {
+export interface TourBase {
   city: string;
   country: string;
   title: string;
   description: string;
+}
+
+export interface Tour extends TourBase {
+  id: string;
+
+  stops: string[];
+  image?: string;
+
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TourDB extends TourBase {
+  stops: string;
+  image?: string;
+}
+
+export interface TourAI extends TourBase {
   stops: string[];
 }
