@@ -1,13 +1,39 @@
 'use client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 
 import TourInfo from '@/components/tour/info';
+import {
+  createNewTour,
+  generateTourData,
+  getExistingTour,
+} from '@/actions/tour';
+import { TourDestination } from '@/types/tour';
 
 export default function NewTour() {
+  const { mutate, isPending, data } = useMutation({
+    mutationFn: async (destination: TourDestination) => {
+      const newTour = await generateTourData(destination);
+      if (newTour) {
+        return newTour;
+      }
+
+      toast.error('No matching city found...');
+      return null;
+    },
+  });
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const destination = Object.fromEntries(formData.entries());
-    console.log(destination);
+    const destination: TourDestination = Object.fromEntries(
+      formData.entries()
+    ) as unknown as TourDestination;
+    mutate(destination);
+  }
+
+  if (isPending) {
+    return <span className='loading, loading-lg'></span>;
   }
 
   return (
@@ -34,9 +60,7 @@ export default function NewTour() {
           </button>
         </div>
       </form>
-      <div className='mt-16'>
-        <TourInfo />
-      </div>
+      <div className='mt-16'>{data && <TourInfo tour={data} />}</div>
     </>
   );
 }

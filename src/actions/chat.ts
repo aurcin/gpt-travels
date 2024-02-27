@@ -1,8 +1,6 @@
 'use server';
 
-import { CohereClient } from 'cohere-ai';
-
-const cohere = new CohereClient({ token: process.env.COHERE_API_KEY || '' });
+import { cohere } from '@/utils/ai-client';
 
 export async function generateChatResponse(
   message: string,
