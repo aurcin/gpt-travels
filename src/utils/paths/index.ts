@@ -17,3 +17,7 @@ export function tours() {
 export function toursNew() {
   return '/tours/new-tour';
 }
+
+export function tour(id: string) {
+  return `/tours/${id}`;
+}

@@ -25,6 +25,40 @@ export async function getExistingTour(destination: TourDestination) {
   return { ...tour, stops };
 }
 
+export async function getAllTours(searchTerm?: string) {
+  if (!searchTerm) {
+    const tours = await db.tour.findMany({
+      orderBy: {
+        city: 'asc',
+      },
+    });
+
+    return tours;
+  }
+
+  const tours = await db.tour.findMany({
+    where: {
+      OR: [
+        {
+          city: {
+            contains: searchTerm,
+          },
+        },
+        {
+          country: {
+            contains: searchTerm,
+          },
+        },
+      ],
+    },
+    orderBy: {
+      city: 'asc',
+    },
+  });
+
+  return tours;
+}
+
 export async function generateTourData(destination: TourDestination) {
   const input = tourQuery(destination);
 
