@@ -51,6 +51,7 @@ export async function getAllTours(searchTerm?: string) {
         },
       ],
     },
+
     orderBy: {
       city: 'asc',
     },
