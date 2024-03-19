@@ -16,8 +16,8 @@ export interface Tour extends TourBase {
   stops: string[];
   image?: string;
 
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface TourDB extends TourBase {

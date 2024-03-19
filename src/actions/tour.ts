@@ -60,6 +60,22 @@ export async function getAllTours(searchTerm?: string) {
   return tours;
 }
 
+export async function getTour(id: string) {
+  const tour = await db.tour.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!tour) {
+    return null;
+  }
+
+  const stops = tour.stops.split('-|-');
+
+  return { ...tour, stops };
+}
+
 export async function generateTourData(destination: TourDestination) {
   const input = tourQuery(destination);
 

@@ -21,3 +21,7 @@ export function toursNew() {
 export function tour(id: string) {
   return `/tours/${id}`;
 }
+
+export function unsplash(query: string) {
+  return `https://api.unsplash.com/search/photos?client_id=${process.env.UNSPLASH_API_KEY}&query=${query}`;
+}
